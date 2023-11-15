@@ -29,10 +29,16 @@ let package = Package(
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
             ]
         ),
+        .executableTarget(
+            name: "Exec",
+            dependencies: [
+                "FunctionPaths"
+            ]
+        ),
         .target(
             name: "FunctionPaths",
             dependencies: [
-                "FunctionPathsMacros"
+//                "FunctionPathsMacros"
             ]
         ),
         .testTarget(
