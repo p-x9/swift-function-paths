@@ -18,6 +18,25 @@ struct Item {
     func printTitle() {
         print(title)
     }
+
+    func duplicate() -> Item {
+        print("duplicated")
+        return .init(
+            title: title,
+            value: value
+        )
+    }
+
+    func throwableFunction(
+        domain: String,
+        code: Int,
+        shouldThrow: Bool = true
+    ) throws -> String {
+        if shouldThrow {
+            throw NSError(domain: domain, code: code)
+        }
+        return "did not throw \(domain)(\(code))"
+    }
 }
 
 extension Item: FuncPathAccessable {}
@@ -108,3 +127,29 @@ print("\n-------------------------------------------")
 print(funcPath)
 print(multipleArgs)
 print(funcPathWithInputs)
+
+
+// MARK: - throwable function
+let throwableFunction = |Item.throwableFunction
+print(throwableFunction)
+
+do {
+    let _ = try item[funcPath: throwableFunction](("domain", -100, true))
+} catch {
+    print(error)
+}
+
+let throwableCount = throwableFunction.count
+do {
+    let counts = try items.map(throwableCount("code", 01234, false))
+    print(counts)
+} catch {
+    print(error)
+}
+
+let duplicateThrowable = (|Item.duplicate).appending(path: throwableFunction)
+do {
+    let _ = try item[funcPath: duplicateThrowable](("domain code", -1234, true))
+} catch {
+    print(error)
+}

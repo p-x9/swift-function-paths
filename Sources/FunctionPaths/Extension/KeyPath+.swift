@@ -31,3 +31,27 @@ extension KeyPath {
         )
     }
 }
+
+extension KeyPath {
+    public func appending<Input, AppendedReturn>(
+        path: ThrowingFunctionPath<Value, Input, AppendedReturn>
+    ) -> ThrowingFunctionPath<Root, Input, AppendedReturn> {
+        .init(
+            call: { root in
+                { input in
+                    try path.call(root[keyPath: self])(input)
+                }
+            }
+        )
+    }
+
+    public func appending<AppendedReturn>(
+        path: ThrowingFunctionPathWithInput<Value, AppendedReturn>
+    ) -> ThrowingFunctionPathWithInput<Root, AppendedReturn> {
+        .init(
+            call: { root in
+                try path.call(root[keyPath: self])
+            }
+        )
+    }
+}

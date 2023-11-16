@@ -1,29 +1,29 @@
 //
-//  File.swift
-//  
+//  ThrowingFunctionPathWithInput.swift
 //
-//  Created by p-x9 on 2023/11/15.
+//
+//  Created by p-x9 on 2023/11/16.
 //  
 //
 
 import Foundation
 
 @dynamicMemberLookup
-public struct FunctionPathWithInput<Root, Return> {
-    public let call: (Root) -> Return
+public struct ThrowingFunctionPathWithInput<Root, Return> {
+    public let call: (Root) throws -> Return
 
     // MARK: - Initializer
 
-    public init(call: @escaping (Root) -> Return) {
+    public init(call: @escaping (Root) throws -> Return) {
         self.call = call
     }
 
     public init<Input>(
-        call: @escaping (Root) -> (Input) -> Return,
+        call: @escaping (Root) -> (Input) throws -> Return,
         input: @escaping @autoclosure () -> Input
     ) {
         self.call = { root in
-            call(root)(input())
+            try call(root)(input())
         }
     }
 
@@ -32,13 +32,13 @@ public struct FunctionPathWithInput<Root, Return> {
     @_disfavoredOverload
     public subscript<AppendedReturn>(
         dynamicMember keyPath: KeyPath<Return, AppendedReturn>
-    ) -> (Root) -> AppendedReturn {
+    ) -> (Root) throws -> AppendedReturn {
         appending(keyPath: keyPath)
     }
 
     public subscript<AppendedReturn>(
         dynamicMember keyPath: KeyPath<Return, AppendedReturn>
-    ) -> FunctionPathWithInput<Root, AppendedReturn> {
+    ) -> ThrowingFunctionPathWithInput<Root, AppendedReturn> {
         appending(keyPath: keyPath)
     }
 
@@ -46,11 +46,11 @@ public struct FunctionPathWithInput<Root, Return> {
 
     public func appending<Input, AppendedReturn>(
         path: FunctionPath<Return, Input, AppendedReturn>
-    ) -> FunctionPath<Root, Input, AppendedReturn> {
+    ) -> ThrowingFunctionPath<Root, Input, AppendedReturn> {
         .init(
             call: { root in
                 { input in
-                    path.call(call(root))(input)
+                    try path.call(call(root))(input)
                 }
             }
         )
@@ -71,17 +71,17 @@ public struct FunctionPathWithInput<Root, Return> {
     @_disfavoredOverload
     public func appending<AppendedReturn>(
         keyPath: KeyPath<Return, AppendedReturn>
-    ) -> (Root) -> AppendedReturn {
+    ) -> (Root) throws -> AppendedReturn {
         { root in
-            self.call(root)[keyPath: keyPath]
+            try self.call(root)[keyPath: keyPath]
         }
     }
 
     public func appending<AppendedReturn>(
         keyPath: KeyPath<Return, AppendedReturn>
-    ) -> FunctionPathWithInput<Root, AppendedReturn> {
+    ) -> ThrowingFunctionPathWithInput<Root, AppendedReturn> {
         .init { root in
-            self.call(root)[keyPath: keyPath]
+            try self.call(root)[keyPath: keyPath]
         }
     }
 
@@ -89,12 +89,12 @@ public struct FunctionPathWithInput<Root, Return> {
 
     public func callAsFunction(
         _ root: Root
-    ) -> Return {
-        call(root)
+    ) throws -> Return {
+        try call(root)
     }
 }
 
-extension FunctionPathWithInput where Return == Root {
+extension ThrowingFunctionPathWithInput where Return == Root {
     public static var `self`: Self {
         .init()
     }
@@ -105,8 +105,8 @@ extension FunctionPathWithInput where Return == Root {
 }
 
 // MARK: - CustomDebugStringConvertible
-extension FunctionPathWithInput: CustomDebugStringConvertible {
+extension ThrowingFunctionPathWithInput: CustomDebugStringConvertible {
     public var debugDescription: String {
-        "FunctionPathWithInput<\(Root.self), \(Return.self)>"
+        "ThrowingFunctionPathWithInput<\(Root.self), \(Return.self)>"
     }
 }

@@ -107,3 +107,104 @@ extension Sequence {
         })
     }
 }
+
+// MARK: - ThrowingFunctionPath
+extension Sequence {
+
+    // MARK: - Finding Elements
+
+    @inlinable
+    public func contains(where predicate: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> Bool {
+        try contains(where: predicate.call)
+    }
+
+    @inlinable
+    public func allSatisfy(_ predicate: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> Bool {
+        try allSatisfy(predicate.call)
+    }
+
+    @inlinable
+    public func first(where predicate: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> Self.Element? {
+        try first(where: predicate.call)
+    }
+
+    @inlinable
+    public func min(
+        by areInIncreasingOrder: ThrowingFunctionPathWithInput<(Self.Element, Self.Element), Bool>
+    ) throws -> Self.Element? {
+        try self.min(by: { lhs, rhs in
+            try areInIncreasingOrder.call((lhs, rhs))
+        })
+    }
+
+    @inlinable
+    public func max(
+        by areInIncreasingOrder: ThrowingFunctionPathWithInput<(Self.Element, Self.Element), Bool>
+    ) throws -> Self.Element? {
+        try self.max(by: { lhs, rhs in
+            try areInIncreasingOrder.call((lhs, rhs))
+        })
+    }
+
+
+    // MARK: - Selecting Elements
+
+    @inlinable
+    public func prefix(while predicate: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> [Self.Element] {
+        try prefix(while: predicate.call)
+    }
+
+    // MARK: - Excluding Elements
+
+    @inlinable
+    public func drop(while predicate: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> DropWhileSequence<Self> {
+        try drop(while: predicate.call)
+    }
+
+    @inlinable
+    public func filter(_ isIncluded: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> [Self.Element] {
+        try filter(isIncluded.call)
+    }
+
+    // MARK: - Transforming a Sequence
+
+    @inlinable
+    public func map<T>(_ transform: ThrowingFunctionPathWithInput<Self.Element, T>) throws -> [T] {
+        try map(transform.call)
+    }
+
+    @inlinable
+    public func compactMap<ElementOfResult>(
+        _ transform: ThrowingFunctionPathWithInput<Self.Element, ElementOfResult?>
+    ) throws -> [ElementOfResult] {
+        try compactMap(transform.call)
+    }
+
+    @inlinable
+    public func reduce<Result>(
+        _ initialResult: Result,
+        _ nextPartialResult: ThrowingFunctionPathWithInput<(Result, Self.Element), Result>
+    ) throws -> Result {
+        try reduce(initialResult, { result, element in
+            try nextPartialResult.call((result, element))
+        })
+    }
+
+    // MARK: - Iterating Over a Sequence’s Elements
+
+    @inlinable
+    public func forEach(_ body: ThrowingFunctionPathWithInput<Self.Element, Void>) throws {
+        try forEach(body.call)
+    }
+
+    // MARK: - Sorting Elements
+
+    @inlinable
+    public func sorted(
+        by areInIncreasingOrder: ThrowingFunctionPathWithInput<(Self.Element, Self.Element), Bool>
+    ) throws -> [Self.Element] {
+        try sorted(by: { lhs, rhs in
+            try areInIncreasingOrder.call((lhs, rhs))
+        })
+    }
+}

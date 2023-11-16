@@ -18,7 +18,7 @@ prefix operator |
 public prefix func | <Root, Input, Return>(
     call: @escaping ((Root) -> (Input) -> Return)
 ) -> FunctionPath<Root, Input, Return> {
-    return FunctionPath(call: call)
+    return .init(call: call)
 }
 
 public prefix func | <Root, each T, Return>(

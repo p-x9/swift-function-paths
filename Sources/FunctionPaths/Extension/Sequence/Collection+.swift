@@ -30,3 +30,27 @@ extension Collection {
         trimmingPrefix(while: predicate.call)
     }
 }
+
+// MARK: - ThrowingFunctionPath
+extension Collection {
+    @inlinable
+    public func drop(while predicate: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> Self.SubSequence {
+        try drop(while: predicate.call)
+    }
+
+    @inlinable
+    public func firstIndex(where predicate: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> Self.Index? {
+        try firstIndex(where: predicate.call)
+    }
+
+    @inlinable
+    public func prefix(while predicate: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> Self.SubSequence {
+        try prefix(while: predicate.call)
+    }
+
+    @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
+    @inlinable
+    public func trimmingPrefix(while predicate: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> Self.SubSequence {
+        try trimmingPrefix(while: predicate.call)
+    }
+}
