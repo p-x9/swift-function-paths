@@ -9,6 +9,10 @@ struct Item {
         "\(title): \(value) (\(date.timeIntervalSince1970))"
     }
 
+    func multipleArgs(_ arg1: Int, _ arg2: String) -> String {
+        "\(title): \(value) (\(arg1), \(arg2))"
+    }
+
     func vv() -> String { title }
 
     func printTitle() {
@@ -85,3 +89,14 @@ print("\n-------------------------------------------")
 let count = |\String.count
 print(count("ajsfpoajsfp"))
 
+// MARK: - Multiple Arguments
+print("\n-------------------------------------------")
+let multipleArgs = |Item.multipleArgs
+
+print(
+    items
+        .map(
+            multipleArgs((Int.random(in: 0...100), "hello"))
+        )
+        .joined(separator: "\n")
+)

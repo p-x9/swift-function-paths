@@ -21,6 +21,16 @@ public prefix func | <Root, Input, Return>(
     return FunctionPath(call: call)
 }
 
+public prefix func | <Root, each T, Return>(
+    call: @escaping ((Root) -> (repeat each T) -> Return)
+) -> FunctionPath<Root, (repeat each T), Return> {
+    return .init { root in
+        { input in
+            call(root)(repeat each input)
+        }
+    }
+}
+
 public prefix func | <Root, Return>(
     call: @escaping ((Root) -> () -> Return)
 ) -> FunctionPathWithInput<Root, Return> {

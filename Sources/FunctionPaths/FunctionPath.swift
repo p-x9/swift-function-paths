@@ -14,7 +14,9 @@ public struct FunctionPath<Root, Input, Return> {
 
     // MARK: - Initializer
 
-    public init(call: @escaping (Root) -> ((Input) -> Return)) {
+    public init(
+        call: @escaping (Root) -> (Input) -> Return
+    ) {
         self.call = call
     }
 
