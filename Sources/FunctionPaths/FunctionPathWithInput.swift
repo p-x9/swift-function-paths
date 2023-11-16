@@ -95,3 +95,10 @@ extension FunctionPathWithInput where Return == Root {
         self.init(call: { root in return root})
     }
 }
+
+// MARK: - CustomDebugStringConvertible
+extension FunctionPathWithInput: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "FunctionPathWithInput<\(Root.self), \(Return.self)>"
+    }
+}

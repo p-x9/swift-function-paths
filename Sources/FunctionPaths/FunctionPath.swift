@@ -73,3 +73,10 @@ extension FunctionPath where Return == Root, Input == Void {
         self.init(call: { root in return { _ in root}})
     }
 }
+
+// MARK: - CustomDebugStringConvertible
+extension FunctionPath: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "FunctionPath<\(Root.self), \(Input.self), \(Return.self)>"
+    }
+}

@@ -102,3 +102,9 @@ print(
 )
 
 print(item[funcPath: multipleArgs(12, "asdf")])
+
+// MARK: - CustomDebugStringConvertible
+print("\n-------------------------------------------")
+print(funcPath)
+print(multipleArgs)
+print(funcPathWithInputs)
