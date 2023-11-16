@@ -100,3 +100,5 @@ print(
         )
         .joined(separator: "\n")
 )
+
+print(item[funcPath: multipleArgs(12, "asdf")])
