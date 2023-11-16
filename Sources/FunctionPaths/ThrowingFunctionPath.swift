@@ -1,21 +1,21 @@
 //
-//  FunctionPath.swift
+//  ThrowingFunctionPath.swift
 //
 //
-//  Created by p-x9 on 2023/11/15.
+//  Created by p-x9 on 2023/11/16.
 //  
 //
 
 import Foundation
 
 @dynamicMemberLookup
-public struct FunctionPath<Root, Input, Return> {
-    public let call: (Root) -> (Input) -> Return
+public struct ThrowingFunctionPath<Root, Input, Return> {
+    public let call: (Root) -> (Input) throws -> Return
 
     // MARK: - Initializer
 
     public init(
-        call: @escaping (Root) -> (Input) -> Return
+        call: @escaping (Root) -> (Input) throws -> Return
     ) {
         self.call = call
     }
@@ -25,13 +25,13 @@ public struct FunctionPath<Root, Input, Return> {
     @_disfavoredOverload
     public subscript<AppendedReturn>(
         dynamicMember keyPath: KeyPath<Return, AppendedReturn>
-    ) -> (Root) -> (Input) -> AppendedReturn {
+    ) -> (Root) -> (Input) throws -> AppendedReturn {
         appending(keyPath: keyPath)
     }
 
     public subscript<AppendedReturn>(
         dynamicMember keyPath: KeyPath<Return, AppendedReturn>
-    ) -> FunctionPath<Root, Input, AppendedReturn> {
+    ) -> ThrowingFunctionPath<Root, Input, AppendedReturn> {
         appending(keyPath: keyPath)
     }
 
@@ -39,20 +39,20 @@ public struct FunctionPath<Root, Input, Return> {
     @_disfavoredOverload
     public func appending<AppendedReturn>(
         keyPath: KeyPath<Return, AppendedReturn>
-    ) -> (Root) -> (Input) -> AppendedReturn {
+    ) -> (Root) -> (Input) throws -> AppendedReturn {
         { root in
             { input in
-                self.call(root)(input)[keyPath: keyPath]
+                try self.call(root)(input)[keyPath: keyPath]
             }
         }
     }
 
     public func appending<AppendedReturn>(
         keyPath: KeyPath<Return, AppendedReturn>
-    ) -> FunctionPath<Root, Input, AppendedReturn> {
+    ) -> ThrowingFunctionPath<Root, Input, AppendedReturn> {
         .init { root in
             { input in
-                self.call(root)(input)[keyPath: keyPath]
+                try self.call(root)(input)[keyPath: keyPath]
             }
         }
     }
@@ -62,15 +62,15 @@ public struct FunctionPath<Root, Input, Return> {
     @_disfavoredOverload
     public func callAsFunction(
         _ input: @escaping @autoclosure () -> Input
-    ) -> (Root) -> Return {
+    ) -> (Root) throws -> Return {
         { root in
-            call(root)(input())
+            try call(root)(input())
         }
     }
 
     public func callAsFunction(
         _ input: @escaping @autoclosure () -> Input
-    ) -> FunctionPathWithInput<Root, Return> {
+    ) -> ThrowingFunctionPathWithInput<Root, Return> {
         .init(
             call: call,
             input: input()
@@ -78,7 +78,7 @@ public struct FunctionPath<Root, Input, Return> {
     }
 }
 
-extension FunctionPath where Return == Root, Input == Void {
+extension ThrowingFunctionPath where Return == Root, Input == Void {
     public static var `self`: Self {
         .init()
     }
@@ -89,8 +89,8 @@ extension FunctionPath where Return == Root, Input == Void {
 }
 
 // MARK: - CustomDebugStringConvertible
-extension FunctionPath: CustomDebugStringConvertible {
+extension ThrowingFunctionPath: CustomDebugStringConvertible {
     public var debugDescription: String {
-        "FunctionPath<\(Root.self), \(Input.self), \(Return.self)>"
+        "ThrowingFunctionPath<\(Root.self), \(Input.self), \(Return.self)>"
     }
 }

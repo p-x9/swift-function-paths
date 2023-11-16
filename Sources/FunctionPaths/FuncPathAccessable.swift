@@ -24,3 +24,11 @@ extension FuncPathAccessable {
         path.call(self)
     }
 }
+
+extension FuncPathAccessable {
+    public subscript<Input, Return>(
+        funcPath path: ThrowingFunctionPath<Self, Input, Return>
+    ) -> (Input) throws -> Return {
+        path.call(self)
+    }
+}
