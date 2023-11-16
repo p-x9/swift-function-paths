@@ -23,3 +23,20 @@ extension MutableCollection where Self: RandomAccessCollection {
         })
     }
 }
+
+// MARK: - ThrowingFunctionPath
+extension MutableCollection {
+    @inlinable
+    public mutating func partition(by belongsInSecondPartition: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> Self.Index {
+        try partition(by: belongsInSecondPartition.call)
+    }
+}
+
+extension MutableCollection where Self: RandomAccessCollection {
+    @inlinable
+    public mutating func sort(by areInIncreasingOrder: ThrowingFunctionPathWithInput<(Self.Element, Self.Element), Bool>) throws {
+        try sort(by: { lhs, rhs in
+            try areInIncreasingOrder.call((lhs, rhs))
+        })
+    }
+}

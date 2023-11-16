@@ -29,3 +29,26 @@ extension Array {
         drop(while: predicate.call)
     }
 }
+
+// MARK: - ThrowingFunctionPath
+extension Array {
+    @inlinable
+    public mutating func removeAll(where shouldBeRemoved: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws {
+        try removeAll(where: shouldBeRemoved.call)
+    }
+
+    @inlinable
+    public func last(where predicate: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> Self.Element? {
+        try last(where: predicate.call)
+    }
+
+    @inlinable
+    public func lastIndex(where predicate: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> Self.Index? {
+        try lastIndex(where: predicate.call)
+    }
+
+    @inlinable
+    public func drop(while predicate: ThrowingFunctionPathWithInput<Self.Element, Bool>) throws -> Self.SubSequence {
+        try drop(while: predicate.call)
+    }
+}
