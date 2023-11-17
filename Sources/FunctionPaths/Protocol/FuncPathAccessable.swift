@@ -32,3 +32,19 @@ extension FuncPathAccessable {
         path.call(self)
     }
 }
+
+extension FuncPathAccessable {
+    public subscript<Input, Return>(
+        funcPath path: AsyncFunctionPath<Self, Input, Return>
+    ) -> (Input) async -> Return {
+        path.call(self)
+    }
+}
+
+extension FuncPathAccessable {
+    public subscript<Input, Return>(
+        funcPath path: AsyncThrowingFunctionPath<Self, Input, Return>
+    ) -> (Input) async throws -> Return {
+        path.call(self)
+    }
+}
