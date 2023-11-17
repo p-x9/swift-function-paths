@@ -68,6 +68,30 @@ public struct ThrowingFunctionPathWithInput<Root, Return> {
         )
     }
 
+    public func appending<Input, AppendedReturn>(
+        path: AsyncFunctionPath<Return, Input, AppendedReturn>
+    ) -> AsyncThrowingFunctionPath<Root, Input, AppendedReturn> {
+        .init(
+            call: { root in
+                { input in
+                    try await path.call(call(root))(input)
+                }
+            }
+        )
+    }
+
+    public func appending<Input, AppendedReturn>(
+        path: AsyncThrowingFunctionPath<Return, Input, AppendedReturn>
+    ) -> AsyncThrowingFunctionPath<Root, Input, AppendedReturn> {
+        .init(
+            call: { root in
+                { input in
+                    try await path.call(call(root))(input)
+                }
+            }
+        )
+    }
+
     @_disfavoredOverload
     public func appending<AppendedReturn>(
         keyPath: KeyPath<Return, AppendedReturn>

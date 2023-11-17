@@ -44,3 +44,73 @@ public prefix func | <Root, Return>(
         }
     }
 }
+
+// MARK: - Root
+
+@_disfavoredOverload
+public prefix func | <Root>(
+    root: Root
+) -> AsyncFunctionPath<Root, Void, Root> {
+    return .self
+}
+
+@_disfavoredOverload
+public prefix func | <Root>(
+    root: Root
+) -> AsyncFunctionPathWithInput<Root, Root> {
+    return .self
+}
+
+// MARK: - Root Type
+
+@_disfavoredOverload
+public prefix func | <Root>(
+    type: Root.Type
+) -> AsyncFunctionPath<Root, Void, Root> {
+    return .self
+}
+
+@_disfavoredOverload
+public prefix func | <Root>(
+    type: Root.Type
+) -> AsyncFunctionPathWithInput<Root, Root> {
+    return .self
+}
+
+// MARK: - funcPath
+
+@_disfavoredOverload
+public prefix func | <Root, Input, Return>(
+    path: AsyncFunctionPath<Root, Input, Return>
+) -> AsyncFunctionPath<Root, Input, Return> {
+    path
+}
+
+@_disfavoredOverload
+public prefix func | <Root, Return>(
+    path: AsyncFunctionPathWithInput<Root, Return>
+) -> AsyncFunctionPathWithInput<Root, Return> {
+    path
+}
+
+// MARK: - KeyPath → FunctionPath
+
+@_disfavoredOverload
+public prefix func | <Root, Return>(
+    keyPath: KeyPath<Root, Return>
+) -> AsyncFunctionPath<Root, Void, Return> {
+    .init(call: { root in
+        { _ in
+            root[keyPath: keyPath]
+        }
+    })
+}
+
+@_disfavoredOverload
+public prefix func | <Root, Return>(
+    keyPath: KeyPath<Root, Return>
+) -> AsyncFunctionPathWithInput<Root, Return> {
+    .init(call: { root in
+        root[keyPath: keyPath]
+    })
+}
