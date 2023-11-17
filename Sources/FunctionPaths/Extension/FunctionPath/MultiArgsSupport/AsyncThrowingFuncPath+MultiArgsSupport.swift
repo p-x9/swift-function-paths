@@ -8,6 +8,22 @@
 
 import Foundation
 
+/// Allow function paths with multiple arguments to be called as path(arg1, arg2) instead of as path((arg1, arg2)).
+///
+/// The following could be written using Variadic Generics,
+/// but it does not seem to compile currently
+/// (Apple Swift version 5.9 (swiftlang-5.9.0.128.108 clang-1500.0.40.1))
+///
+///```swift
+/// public func callAsFunction<each T>(
+///     _ input: repeat @escaping @autoclosure () -> (each T)
+/// ) -> (Root) async throws -> Return where Input == (repeat each T){
+///     { root in
+///         let inputs = (repeat (each input)())
+///         return try await call(root)(inputs) // ❌
+///     }
+/// }
+///```
 extension AsyncThrowingFunctionPath {
 
     // MARK: 2 args
