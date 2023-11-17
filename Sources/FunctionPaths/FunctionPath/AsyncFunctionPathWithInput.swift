@@ -1,29 +1,29 @@
 //
-//  FunctionPathWithInput.swift
+//  AsyncFunctionPathWithInput.swift
 //
 //
-//  Created by p-x9 on 2023/11/15.
+//  Created by p-x9 on 2023/11/17.
 //  
 //
 
 import Foundation
 
 @dynamicMemberLookup
-public struct FunctionPathWithInput<Root, Return> {
-    public let call: (Root) -> Return
+public struct AsyncFunctionPathWithInput<Root, Return> {
+    public let call: (Root) async -> Return
 
     // MARK: - Initializer
 
-    public init(call: @escaping (Root) -> Return) {
+    public init(call: @escaping (Root) async -> Return) {
         self.call = call
     }
 
     public init<Input>(
-        call: @escaping (Root) -> (Input) -> Return,
+        call: @escaping (Root) -> (Input) async -> Return,
         input: @escaping @autoclosure () -> Input
     ) {
         self.call = { root in
-            call(root)(input())
+            await call(root)(input())
         }
     }
 
@@ -32,13 +32,13 @@ public struct FunctionPathWithInput<Root, Return> {
     @_disfavoredOverload
     public subscript<AppendedReturn>(
         dynamicMember keyPath: KeyPath<Return, AppendedReturn>
-    ) -> (Root) -> AppendedReturn {
+    ) -> (Root) async -> AppendedReturn {
         appending(keyPath: keyPath)
     }
 
     public subscript<AppendedReturn>(
         dynamicMember keyPath: KeyPath<Return, AppendedReturn>
-    ) -> FunctionPathWithInput<Root, AppendedReturn> {
+    ) -> AsyncFunctionPathWithInput<Root, AppendedReturn> {
         appending(keyPath: keyPath)
     }
 
@@ -46,23 +46,11 @@ public struct FunctionPathWithInput<Root, Return> {
 
     public func appending<Input, AppendedReturn>(
         path: FunctionPath<Return, Input, AppendedReturn>
-    ) -> FunctionPath<Root, Input, AppendedReturn> {
+    ) -> AsyncFunctionPath<Root, Input, AppendedReturn> {
         .init(
             call: { root in
                 { input in
-                    path.call(call(root))(input)
-                }
-            }
-        )
-    }
-
-    public func appending<Input, AppendedReturn>(
-        path: ThrowingFunctionPath<Return, Input, AppendedReturn>
-    ) -> ThrowingFunctionPath<Root, Input, AppendedReturn> {
-        .init(
-            call: { root in
-                { input in
-                    try path.call(call(root))(input)
+                    await path.call(call(root))(input)
                 }
             }
         )
@@ -75,6 +63,18 @@ public struct FunctionPathWithInput<Root, Return> {
             call: { root in
                 { input in
                     await path.call(call(root))(input)
+                }
+            }
+        )
+    }
+
+    public func appending<Input, AppendedReturn>(
+        path: ThrowingFunctionPath<Return, Input, AppendedReturn>
+    ) -> AsyncThrowingFunctionPath<Root, Input, AppendedReturn> {
+        .init(
+            call: { root in
+                { input in
+                    try await path.call(call(root))(input)
                 }
             }
         )
@@ -95,17 +95,17 @@ public struct FunctionPathWithInput<Root, Return> {
     @_disfavoredOverload
     public func appending<AppendedReturn>(
         keyPath: KeyPath<Return, AppendedReturn>
-    ) -> (Root) -> AppendedReturn {
+    ) -> (Root) async -> AppendedReturn {
         { root in
-            self.call(root)[keyPath: keyPath]
+            await self.call(root)[keyPath: keyPath]
         }
     }
 
     public func appending<AppendedReturn>(
         keyPath: KeyPath<Return, AppendedReturn>
-    ) -> FunctionPathWithInput<Root, AppendedReturn> {
+    ) -> AsyncFunctionPathWithInput<Root, AppendedReturn> {
         .init { root in
-            self.call(root)[keyPath: keyPath]
+            await self.call(root)[keyPath: keyPath]
         }
     }
 
@@ -113,12 +113,12 @@ public struct FunctionPathWithInput<Root, Return> {
 
     public func callAsFunction(
         _ root: Root
-    ) -> Return {
-        call(root)
+    ) async -> Return {
+        await call(root)
     }
 }
 
-extension FunctionPathWithInput where Return == Root {
+extension AsyncFunctionPathWithInput where Return == Root {
     public static var `self`: Self {
         .init()
     }
@@ -129,8 +129,8 @@ extension FunctionPathWithInput where Return == Root {
 }
 
 // MARK: - CustomDebugStringConvertible
-extension FunctionPathWithInput: CustomDebugStringConvertible {
+extension AsyncFunctionPathWithInput: CustomDebugStringConvertible {
     public var debugDescription: String {
-        "FunctionPathWithInput<\(Root.self), \(Return.self)>"
+        "AsyncFunctionPathWithInput<\(Root.self), \(Return.self)>"
     }
 }

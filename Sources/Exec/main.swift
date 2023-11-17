@@ -37,6 +37,21 @@ struct Item {
         }
         return "did not throw \(domain)(\(code))"
     }
+
+    func asyncPrint(_ arg1: Int, _ arg2: String) async {
+        print("\(title): \(value) (\(arg1), \(arg2))")
+    }
+
+    func asyncThrowsPrint(
+        domain: String,
+        code: Int,
+        shouldThrow: Bool
+    ) async throws {
+        if shouldThrow {
+            throw NSError(domain: domain, code: code)
+        }
+        print("\(title): \(value) (\(domain), \(code))")
+    }
 }
 
 extension Item: FuncPathAccessable {}
@@ -130,6 +145,7 @@ print(funcPathWithInputs)
 
 
 // MARK: - throwable function
+print("\n-------------------------------------------")
 let throwableFunction = |Item.throwableFunction
 print(throwableFunction)
 
@@ -153,3 +169,35 @@ do {
 } catch {
     print(error)
 }
+
+// MARK: - async function
+print("\n-------------------------------------------")
+let asyncPrint = |Item.asyncPrint
+let asyncPrintClosure = item[funcPath: asyncPrint]
+
+print(type(of: asyncPrintClosure))
+
+let asyncSemaphore = DispatchSemaphore(value: 0)
+let asyncTask = Task {
+    await asyncPrintClosure((5, "async"))
+    asyncSemaphore.signal()
+}
+asyncSemaphore.wait()
+
+// MARK: - async throwing function
+print("\n-------------------------------------------")
+let asyncThrowsPrint = |Item.asyncThrowsPrint
+let asyncThrowsPrintClosure = item[funcPath: asyncThrowsPrint]
+
+print(type(of: asyncThrowsPrintClosure))
+
+let asyncThrowsSemaphore = DispatchSemaphore(value: 0)
+let asyncThrowsTask = Task {
+    do {
+        try await asyncThrowsPrintClosure(("async", 5, true))
+    } catch {
+        print(error)
+    }
+    asyncThrowsSemaphore.signal()
+}
+asyncThrowsSemaphore.wait()
