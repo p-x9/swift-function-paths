@@ -36,6 +36,55 @@ public struct AsyncThrowingFunctionPath<Root, Input, Return> {
     }
 
     // MARK: - appending
+
+    public func appending<AppendedReturn>(
+        path: FunctionPathWithInput<Return, AppendedReturn>
+    ) -> AsyncThrowingFunctionPath<Root, Input, AppendedReturn> {
+        .init(
+            call: { root in
+                { input in
+                    try await path.call(call(root)(input))
+                }
+            }
+        )
+    }
+
+    public func appending<AppendedReturn>(
+        path: ThrowingFunctionPathWithInput<Return, AppendedReturn>
+    ) -> AsyncThrowingFunctionPath<Root, Input, AppendedReturn> {
+        .init(
+            call: { root in
+                { input in
+                    try await path.call(call(root)(input))
+                }
+            }
+        )
+    }
+
+    public func appending<AppendedReturn>(
+        path: AsyncFunctionPathWithInput<Return, AppendedReturn>
+    ) -> AsyncThrowingFunctionPath<Root, Input, AppendedReturn> {
+        .init(
+            call: { root in
+                { input in
+                    try await path.call(call(root)(input))
+                }
+            }
+        )
+    }
+
+    public func appending<AppendedReturn>(
+        path: AsyncThrowingFunctionPathWithInput<Return, AppendedReturn>
+    ) -> AsyncThrowingFunctionPath<Root, Input, AppendedReturn> {
+        .init(
+            call: { root in
+                { input in
+                    try await path.call(call(root)(input))
+                }
+            }
+        )
+    }
+
     @_disfavoredOverload
     public func appending<AppendedReturn>(
         keyPath: KeyPath<Return, AppendedReturn>
@@ -68,14 +117,14 @@ public struct AsyncThrowingFunctionPath<Root, Input, Return> {
         }
     }
 
-//    public func callAsFunction(
-//        _ input: @escaping @autoclosure () -> Input
-//    ) -> AsyncThrowingFunctionPathWithInput<Root, Return> {
-//        .init(
-//            call: call,
-//            input: input()
-//        )
-//    }
+    public func callAsFunction(
+        _ input: @escaping @autoclosure () -> Input
+    ) -> AsyncThrowingFunctionPathWithInput<Root, Return> {
+        .init(
+            call: call,
+            input: input()
+        )
+    }
 }
 
 extension AsyncThrowingFunctionPath where Return == Root, Input == Void {
