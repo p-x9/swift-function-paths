@@ -19,12 +19,6 @@ let package = Package(
     ],
     dependencies: [],
     targets: [
-        .executableTarget(
-            name: "Exec",
-            dependencies: [
-                "FunctionPaths"
-            ]
-        ),
         .target(
             name: "FunctionPaths",
             dependencies: []
