@@ -1,7 +1,6 @@
 // swift-tools-version: 5.9
 
 import PackageDescription
-import CompilerPluginSupport
 
 let package = Package(
     name: "FunctionPaths",
@@ -18,17 +17,8 @@ let package = Package(
             targets: ["FunctionPaths"]
         )
     ],
-    dependencies: [
-        .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0"),
-    ],
+    dependencies: [],
     targets: [
-        .macro(
-            name: "FunctionPathsMacros",
-            dependencies: [
-                .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
-                .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
-            ]
-        ),
         .executableTarget(
             name: "Exec",
             dependencies: [
@@ -37,15 +27,12 @@ let package = Package(
         ),
         .target(
             name: "FunctionPaths",
-            dependencies: [
-//                "FunctionPathsMacros"
-            ]
+            dependencies: []
         ),
         .testTarget(
             name: "FunctionPathsTests",
             dependencies: [
-                "FunctionPathsMacros",
-                .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+                "FunctionPaths",
             ]
         ),
     ]

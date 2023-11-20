@@ -1,3 +1,2 @@
-import SwiftSyntaxMacros
-import SwiftSyntaxMacrosTestSupport
 import XCTest
+@testable import FunctionPaths
