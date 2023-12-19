@@ -7,7 +7,7 @@ functionPath is like a function version of keyPath.
 
 <!-- # Badges -->
 
-[![Github issues](https://img.shields.io/github/issues/p-x9/c)](https://github.com/p-x9/swift-function-paths/issues)
+[![Github issues](https://img.shields.io/github/issues/p-x9/swift-function-paths)](https://github.com/p-x9/swift-function-paths/issues)
 [![Github forks](https://img.shields.io/github/forks/p-x9/swift-function-paths)](https://github.com/p-x9/swift-function-paths/network/members)
 [![Github stars](https://img.shields.io/github/stars/p-x9/swift-function-paths)](https://github.com/p-x9/swift-function-paths/stargazers)
 [![Github top language](https://img.shields.io/github/languages/top/p-x9/swift-function-paths)](https://github.com/p-x9/swift-function-paths/)
